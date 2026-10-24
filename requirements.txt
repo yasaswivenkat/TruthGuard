@@ -1,0 +1,12 @@
+# TruthGuard Core Dependencies
+# Core Engine: Standard library zero-external-dependency fallback (http.server, json, urllib, sqlite3, math)
+
+# Testing & Quality Assurance
+pytest>=8.0.0
+
+# Optional Production Cloud Extensions (FastAPI / LangGraph / Qdrant)
+fastapi>=0.110.0
+uvicorn>=0.28.0
+pydantic>=2.6.0
+langgraph>=0.0.30
+qdrant-client>=1.8.0

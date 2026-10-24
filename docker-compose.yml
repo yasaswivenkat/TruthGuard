@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  truthguard:
+    build: .
+    container_name: codebots_truthguard_engine
+    ports:
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=production
+      - HOST=0.0.0.0
+      - PORT=8000
+    restart: unless-stopped
