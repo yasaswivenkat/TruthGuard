@@ -1,0 +1,90 @@
+[
+  {
+    "id": "DOC-TIME-001",
+    "title": "Telecom SLA Framework 2023 (Base Agreement)",
+    "category": "Telecom & Media (TIME BU)",
+    "version": "1.0",
+    "effective_date": "2023-01-15",
+    "supersedes": null,
+    "superseded_by": "DOC-TIME-002",
+    "author": "Virtusa Global Telecom Operations",
+    "content": "Section 4.1: Tier-1 Network Outage penalty compensation is strictly capped at $5,000 per incident. The mandatory Mean Time to Resolution (MTTR) response window is four (4) hours from initial ticket generation. Failures exceeding 4 hours incur a flat 5% monthly fee credit."
+  },
+  {
+    "id": "DOC-TIME-002",
+    "title": "Telecom SLA Amendment 2025 (Superseding Addendum)",
+    "category": "Telecom & Media (TIME BU)",
+    "version": "2.1",
+    "effective_date": "2025-03-01",
+    "supersedes": "DOC-TIME-001",
+    "superseded_by": null,
+    "author": "Virtusa Enterprise Risk & Legal Directorate",
+    "content": "Addendum Section 4.1-A (Amending and Superseding SLA 2023 Section 4.1): In response to Tier-1 cloud virtualization standards, Tier-1 Network Outage penalty compensation is revised and capped at $25,000 per incident. The mandatory MTTR window is shortened to strictly one (1) hour. All prior terms in DOC-TIME-001 Section 4.1 are hereby voided."
+  },
+  {
+    "id": "DOC-TIME-003",
+    "title": "Private 5G Spectrum Power Regulation (Regional Circular A)",
+    "category": "Telecom & Media (TIME BU)",
+    "version": "1.0",
+    "effective_date": "2024-06-10",
+    "supersedes": null,
+    "superseded_by": null,
+    "author": "Regional Spectrum Authority",
+    "content": "Circular 2024-A: Private 5G enterprise deployments on Band 78 (3.5 GHz) within suburban enterprise corridors are restricted to a maximum effective isotropic radiated power (EIRP) of 200 Watts to prevent terrestrial satellite cross-talk interference."
+  },
+  {
+    "id": "DOC-TIME-004",
+    "title": "Federal Industrial 5G Power Directive (Circular B - Simultaneous)",
+    "category": "Telecom & Media (TIME BU)",
+    "version": "1.0",
+    "effective_date": "2024-06-10",
+    "supersedes": null,
+    "superseded_by": null,
+    "author": "Federal Communications Oversight Board",
+    "content": "Directive 2024-B: High-throughput automated logistics facilities operating private 5G on Band 78 are granted unconditional operational authorization for radiated power up to 400 Watts across all suburban industrial campuses."
+  },
+  {
+    "id": "DOC-MED-001",
+    "title": "Cardiovascular Clinical Guideline v2022",
+    "category": "Healthcare & Life Sciences",
+    "version": "3.0",
+    "effective_date": "2022-04-12",
+    "supersedes": null,
+    "superseded_by": "DOC-MED-002",
+    "author": "Clinical Standards Board",
+    "content": "Guideline 7.3: For adult patients exhibiting persistent Stage 2 arterial hypertension, administer Medication Cardipril 50mg BID (twice daily) titrated upwards to a maximum daily dose of 100mg with morning meals."
+  },
+  {
+    "id": "DOC-MED-002",
+    "title": "FDA Drug Safety Communication — Cardipril Dose Capping",
+    "category": "Healthcare & Life Sciences",
+    "version": "4.0",
+    "effective_date": "2025-01-20",
+    "supersedes": "DOC-MED-001",
+    "superseded_by": null,
+    "author": "FDA Drug Safety Directorate",
+    "content": "Black Box Warning & Dosage Amendment: Clinical trials indicate cardiotoxicity and severe hypotension risks at dosages exceeding 25mg daily. All prior clinical guidelines specifying 50mg or 100mg BID for Cardipril are revoked. The maximum safe dosage of Cardipril is strictly capped at 25mg once daily."
+  },
+  {
+    "id": "DOC-SEC-001",
+    "title": "Enterprise Data Retention & Archival SOP 2021",
+    "category": "Legal & IT Security",
+    "version": "1.2",
+    "effective_date": "2021-08-01",
+    "supersedes": null,
+    "superseded_by": "DOC-SEC-002",
+    "author": "Corporate IT Governance",
+    "content": "Policy Sec-401: All enterprise communication logs, subscriber access records, and telemetry metadata must be archived on encrypted cold tape for a minimum statutory retention period of seven (7) years prior to destruction."
+  },
+  {
+    "id": "DOC-SEC-002",
+    "title": "Global Privacy & Automated Log Sanitization Directive 2024",
+    "category": "Legal & IT Security",
+    "version": "2.0",
+    "effective_date": "2024-11-15",
+    "supersedes": "DOC-SEC-001",
+    "superseded_by": null,
+    "author": "Chief Privacy & Compliance Officer",
+    "content": "Directive Sec-401-R2: To enforce GDPR and Right-To-Be-Forgotten compliance, all subscriber access records and telemetry logs older than three (3) years must be permanently shredded from all systems, overriding previous seven-year mandates, unless flagged by an active legal litigation hold."
+  }
+]
