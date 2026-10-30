@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TruthGuard — Adversarial Multi-Agent Document Q&A Verification</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="ambient-glow glow-top-left"></div>
+  <div class="ambient-glow glow-bottom-right"></div>
+
+  <header class="app-header">
+    <div class="header-left">
+      <div class="brand-container">
+        <div class="brand-logo">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="m9 12 2 2 4-4"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <div class="brand-title">TruthGuard <span class="badge-version">v1.2-Enterprise</span></div>
+          <div class="brand-subtitle">Virtusa Jatayu S6 &bull; Track: <strong>TIME BU</strong> &bull; Team: <strong>CodeBots</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="header-center">
+      <div class="status-indicator-pill">
+        <span class="pulse-dot"></span>
+        <span class="status-text" id="engineStatus">Multi-Agent Engine Online</span>
+        <span class="badge-micro" id="activeDocsCount">8 Docs Ingested</span>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <button class="nav-btn" onclick="openBenchmarkModal()" title="Run Automated Benchmark Suite">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+        </svg>
+        <span>Benchmarks</span>
+      </button>
+
+      <button class="nav-btn" onclick="openDagModal()" title="View Directed Acyclic Graph">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+          <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+        </svg>
+        <span>Temporal DAG</span>
+      </button>
+
+      <button class="nav-btn" onclick="openIngestionModal()" title="Ingest Custom Document or Amendment">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+        <span>Add Document</span>
+      </button>
+
+      <button class="nav-btn" onclick="openCorpusModal()" title="Browse Inconsistent Enterprise Corpora">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+        </svg>
+        <span>Corpus (<span id="corpusCount">8</span>)</span>
+      </button>
+
+      <button class="nav-btn nav-btn-primary" onclick="exportAuditReport()" title="Export Formal Compliance Audit PDF">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        <span>Export Audit</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="app-container">
+
+    <section class="hero-query-card">
+      <div class="query-top-options">
+        <div class="mode-selector-group">
+          <span class="mode-label">Verification Mode:</span>
+          <button class="mode-btn active" onclick="setVerificationMode('dialectical', this)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+            <span>Dialectical Multi-Agent</span>
+          </button>
+          <button class="mode-btn" onclick="setVerificationMode('temporal_only', this)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+            <span>Temporal DAG Only</span>
+          </button>
+          <button class="mode-btn" onclick="setVerificationMode('strict_audit', this)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+            <span>Zero-Trust Strict Audit</span>
+          </button>
+        </div>
+
+        <div class="topk-control">
+          <label for="topkSlider">Passage Depth (Top-K): <span id="topkVal">5</span></label>
+          <input type="range" id="topkSlider" min="2" max="8" value="5" oninput="document.getElementById('topkVal').textContent = this.value">
+        </div>
+      </div>
+
+      <div class="search-bar-shell">
+        <div class="search-icon-wrapper">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+        </div>
+        <input 
+          type="text" 
+          id="queryInput" 
+          placeholder="Ask a question against conflicting enterprise corpora (e.g. SLA penalties, frequency rights, clinical dosage)..." 
+          value="What is the penalty compensation and MTTR response window for Tier-1 Network Outage?"
+        >
+        <div class="search-actions">
+          <button class="btn-clear" onclick="clearQueryInput()" title="Clear query">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+          <button class="btn-verify" id="btnExecuteQuery" onclick="submitQuery()">
+            <span>Run Multi-Agent Verification</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polygon points="5 3 19 12 5 21 5 3"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="presets-container">
+        <div class="presets-header">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+          </svg>
+          <span>Benchmark Conflict Scenarios:</span>
+        </div>
+        <div class="presets-scroll">
+          <button class="preset-chip active" onclick="loadPreset(1, this)">
+            <span class="chip-badge badge-time">TIME BU</span>
+            <span class="chip-title">SLA Penalty &amp; MTTR Supersedence</span>
+            <span class="chip-type">Resolvable DAG</span>
+          </button>
+
+          <button class="preset-chip" onclick="loadPreset(2, this)">
+            <span class="chip-badge badge-time">TIME BU</span>
+            <span class="chip-title">Suburban 5G Power Authorization</span>
+            <span class="chip-type type-dissent">Transparent Dissent</span>
+          </button>
+
+          <button class="preset-chip" onclick="loadPreset(3, this)">
+            <span class="chip-badge badge-health">Healthcare</span>
+            <span class="chip-title">Cardipril Dosage Guidelines</span>
+            <span class="chip-type">Regulatory Revocation</span>
+          </button>
+
+          <button class="preset-chip" onclick="loadPreset(4, this)">
+            <span class="chip-badge badge-sec">Sec / IT</span>
+            <span class="chip-title">7-Yr Cold Tape vs Privacy Purge</span>
+            <span class="chip-type">Policy Staleness</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section class="telemetry-bar">
+      <div class="kpi-card" onclick="openAgentInspector(0)">
+        <div class="kpi-icon icon-speed">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+          </svg>
+        </div>
+        <div class="kpi-content">
+          <div class="kpi-label">Local Latency</div>
+          <div class="kpi-value" id="kpiLatency">3.8 ms</div>
+          <div class="kpi-sub">Sub-50ms Pipeline</div>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon icon-confidence">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+            <polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+        </div>
+        <div class="kpi-content">
+          <div class="kpi-label">Confidence Score</div>
+          <div class="kpi-value" id="kpiConfidence">95.0%</div>
+          <div class="kpi-sub">Dialectical Consensus</div>
+        </div>
+      </div>
+
+      <div class="kpi-card" onclick="openAgentInspector(2)">
+        <div class="kpi-icon icon-critic">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+            <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+        </div>
+        <div class="kpi-content">
+          <div class="kpi-label">Contradictions Flagged</div>
+          <div class="kpi-value" id="kpiContradictions">2 Detected</div>
+          <div class="kpi-sub" id="kpiStaleness">2 Stale Clauses Voided</div>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon icon-provenance">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+        </div>
+        <div class="kpi-content">
+          <div class="kpi-label">Hallucinated Compromises</div>
+          <div class="kpi-value">0.0%</div>
+          <div class="kpi-sub">100% Cryptographic Provenance</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="agent-stepper-card">
+      <div class="stepper-track">
+        <div class="step-node active" id="nodeStep1" onclick="openAgentInspector(1)" title="Click to view Retriever parameters">
+          <div class="step-circle">
+            <span class="step-num">1</span>
+            <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </div>
+          <div class="step-details">
+            <div class="step-name">Retriever Agent</div>
+            <div class="step-desc">Dense + BM25 Hybrid</div>
+            <div class="step-time" id="timeStep1">0.6 ms</div>
+          </div>
+        </div>
+
+        <div class="step-connector" id="conn1"></div>
+
+        <div class="step-node active" id="nodeStep2" onclick="openAgentInspector(2)" title="Click to view Synthesizer parameters">
+          <div class="step-circle">
+            <span class="step-num">2</span>
+            <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </div>
+          <div class="step-details">
+            <div class="step-name">Synthesizer Agent</div>
+            <div class="step-desc">Claim Extraction</div>
+            <div class="step-time" id="timeStep2">1.2 ms</div>
+          </div>
+        </div>
+
+        <div class="step-connector" id="conn2"></div>
+
+        <div class="step-node active" id="nodeStep3" onclick="openAgentInspector(3)" title="Click to view Critic parameters">
+          <div class="step-circle">
+            <span class="step-num">3</span>
+            <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </div>
+          <div class="step-details">
+            <div class="step-name">Critic / Adversary</div>
+            <div class="step-desc">Cross-Examination Loop</div>
+            <div class="step-time" id="timeStep3">1.6 ms</div>
+          </div>
+        </div>
+
+        <div class="step-connector" id="conn3"></div>
+
+        <div class="step-node active" id="nodeStep4" onclick="openAgentInspector(4)" title="Click to view Resolution parameters">
+          <div class="step-circle">
+            <span class="step-num">4</span>
+            <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </div>
+          <div class="step-details">
+            <div class="step-name">Resolution Arbiter</div>
+            <div class="step-desc">DAG Precedence / Dissent</div>
+            <div class="step-time" id="timeStep4">0.4 ms</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="workspace-grid">
+
+      <div class="workspace-col col-main">
+
+        <section class="panel-card resolution-card">
+          <div class="panel-header">
+            <div class="panel-title-group">
+              <div class="panel-icon-badge">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+              </div>
+              <div>
+                <h2>Verified Resolution &amp; Provenance</h2>
+                <p class="panel-subtitle">Canonical truth derived by enforcing temporal DAG precedence or surfacing dissent</p>
+              </div>
+            </div>
+
+            <div class="panel-header-badges">
+              <span class="verdict-tag" id="resolutionTag">Resolving...</span>
+            </div>
+          </div>
+
+          <div class="panel-body">
+            <div class="panel-loader" id="panelLoader" style="display: none;">
+              <div class="pulse-ring"></div>
+              <p>Orchestrating multi-agent adversarial debate...</p>
+            </div>
+
+            <div class="answer-container" id="answerContainer"></div>
+
+            <div class="supersedence-diff-box" id="supersedenceDiffBox" style="display: none;">
+              <div class="diff-box-header">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                  <polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/>
+                </svg>
+                <span>Temporal Supersedence Clause Comparison</span>
+              </div>
+              <div class="diff-split-columns" id="diffSplitColumns"></div>
+            </div>
+
+            <div class="dissent-comparator-box" id="dissentComparator" style="display: none;">
+              <div class="dissent-banner">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"/>
+                  <line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                <div>
+                  <strong>Simultaneous Contradiction Detected:</strong> Neither document possesses legal supersedence over the other. TruthGuard refuses to hallucinate a false compromise.
+                  <button class="btn-escalate" onclick="triggerEscalationTicket()">Generate Compliance Escalation Ticket</button>
+                </div>
+              </div>
+              <div class="dissent-columns" id="dissentColumns"></div>
+            </div>
+
+            <div class="claims-matrix-section">
+              <div class="section-title">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                </svg>
+                <span>Atomic Claims Grounding Audit</span>
+              </div>
+              <div class="claims-grid" id="claimsGrid"></div>
+            </div>
+
+            <div class="provenance-ledger-section">
+              <div class="section-title flex-between">
+                <div class="flex-align">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+                  </svg>
+                  <span>Cryptographic Provenance &amp; Supersedence Chain</span>
+                </div>
+                <button class="btn-text" onclick="verifyAllHashes()">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                  <span>Verify All Hashes</span>
+                </button>
+              </div>
+
+              <div class="table-responsive">
+                <table class="provenance-table">
+                  <thead>
+                    <tr>
+                      <th>Doc ID</th>
+                      <th>Document Title</th>
+                      <th>Effective Date</th>
+                      <th>Status &amp; Precedence</th>
+                      <th>SHA-256 Provenance Fingerprint</th>
+                    </tr>
+                  </thead>
+                  <tbody id="provenanceTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+      </div>
+
+      <div class="workspace-col col-side">
+
+        <section class="panel-card critic-card">
+          <div class="panel-header">
+            <div class="panel-title-group">
+              <div class="panel-icon-badge badge-critic-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                  <line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+              </div>
+              <div>
+                <h2>Adversarial Cross-Examination</h2>
+                <p class="panel-subtitle">Independent critique detecting clashes &amp; staleness</p>
+              </div>
+            </div>
+            <span class="critic-status-badge" id="criticVerdictBadge">Scrutinizing</span>
+          </div>
+
+          <div class="panel-body">
+            <div class="critic-findings-list" id="criticFindingsList"></div>
+
+            <div class="trace-section">
+              <div class="section-title">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                </svg>
+                <span>Agent State Machine Log</span>
+              </div>
+              <div class="trace-timeline-list" id="traceTimelineList"></div>
+            </div>
+
+            <div class="passages-section">
+              <div class="section-title flex-between">
+                <div class="flex-align">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                  </svg>
+                  <span>Candidate Passages (<span id="retrievedPassagesCount">0</span>)</span>
+                </div>
+                <button class="btn-text" onclick="togglePassagesExpand()" id="btnTogglePassages">Show All</button>
+              </div>
+
+              <div class="passages-accordion" id="passagesAccordion"></div>
+            </div>
+
+          </div>
+        </section>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <div class="modal-backdrop" id="dagModal" style="display: none;">
+    <div class="modal-window modal-window-wide">
+      <div class="modal-top">
+        <div class="modal-title-wrap">
+          <div class="modal-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+            </svg>
+          </div>
+          <div>
+            <h3>Temporal Knowledge Graph (DAG)</h3>
+            <p>Parent-child supersedence and version lineage graph</p>
+          </div>
+        </div>
+        <button class="modal-close" onclick="closeDagModal()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-content" id="dagModalContent"></div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="corpusModal" style="display: none;">
+    <div class="modal-window modal-window-wide">
+      <div class="modal-top">
+        <div class="modal-title-wrap">
+          <div class="modal-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+            </svg>
+          </div>
+          <div>
+            <h3>Inconsistent Enterprise Knowledge Corpus</h3>
+            <p>8 Benchmark Documents with Contradicting Version Lineages across TIME BU, Healthcare &amp; IT Security</p>
+          </div>
+        </div>
+        <div class="flex-align">
+          <button class="btn-secondary-sm" onclick="resetCorpusToDefault()">Reset Corpus</button>
+          <button class="modal-close" onclick="closeCorpusModal()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="corpus-filter-bar">
+        <input type="text" id="corpusSearchInput" placeholder="Filter documents by ID, title, author or keyword..." oninput="filterCorpusDocs()">
+        <div class="category-filters">
+          <button class="filter-pill active" onclick="setCorpusCategory('ALL', this)">All (8)</button>
+          <button class="filter-pill" onclick="setCorpusCategory('TIME BU', this)">TIME BU (4)</button>
+          <button class="filter-pill" onclick="setCorpusCategory('Healthcare', this)">Healthcare (2)</button>
+          <button class="filter-pill" onclick="setCorpusCategory('Legal & IT Security', this)">Security (2)</button>
+        </div>
+      </div>
+
+      <div class="modal-content" id="corpusModalContent"></div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="ingestionModal" style="display: none;">
+    <div class="modal-window">
+      <div class="modal-top">
+        <div class="modal-title-wrap">
+          <div class="modal-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+          </div>
+          <div>
+            <h3>Document Ingestion Studio</h3>
+            <p>Ingest a new enterprise policy or amendment into the Temporal Knowledge Graph</p>
+          </div>
+        </div>
+        <button class="modal-close" onclick="closeIngestionModal()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="modal-content">
+        <form id="ingestForm" onsubmit="handleIngestDocument(event)" class="ingest-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Document ID *</label>
+              <input type="text" id="docIdInput" required placeholder="e.g. DOC-TIME-005">
+            </div>
+            <div class="form-group">
+              <label>Document Title *</label>
+              <input type="text" id="docTitleInput" required placeholder="e.g. 5G Low-Latency SLA Amendment 2026">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Category *</label>
+              <select id="docCategoryInput">
+                <option value="Telecom & Media (TIME BU)">Telecom &amp; Media (TIME BU)</option>
+                <option value="Healthcare & Life Sciences">Healthcare &amp; Life Sciences</option>
+                <option value="Legal & IT Security">Legal &amp; IT Security</option>
+                <option value="Enterprise Governance">Enterprise Governance</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Effective Date *</label>
+              <input type="date" id="docDateInput" required value="2026-06-01">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Version Number</label>
+              <input type="text" id="docVersionInput" value="1.0" placeholder="e.g. 3.0">
+            </div>
+            <div class="form-group">
+              <label>Supersedes Document ID (Optional)</label>
+              <input type="text" id="docSupersedesInput" placeholder="e.g. DOC-TIME-001 (or leave blank)">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Author / Issuing Directorate *</label>
+            <input type="text" id="docAuthorInput" required placeholder="e.g. Global Architecture Review Board">
+          </div>
+
+          <div class="form-group">
+            <label>Document Clause / Directive Content *</label>
+            <textarea id="docContentInput" required rows="4" placeholder="Enter clause text, compensation amounts, numerical directives..."></textarea>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn-secondary" onclick="closeIngestionModal()">Cancel</button>
+            <button type="submit" class="btn-verify">Ingest &amp; Update DAG</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="benchmarkModal" style="display: none;">
+    <div class="modal-window modal-window-wide">
+      <div class="modal-top">
+        <div class="modal-title-wrap">
+          <div class="modal-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+          </div>
+          <div>
+            <h3>Automated Benchmark Evaluation Suite</h3>
+            <p>Empirical Verification Across Conflicting Enterprise Scenarios</p>
+          </div>
+        </div>
+        <button class="modal-close" onclick="closeBenchmarkModal()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="modal-content">
+        <div class="benchmark-summary-strip" id="benchmarkSummaryStrip">
+          <div class="bench-stat-box">
+            <div class="stat-label">Accuracy Rate</div>
+            <div class="stat-val text-green" id="benchAccuracy">100.0%</div>
+            <div class="stat-sub">Zero False Compromises</div>
+          </div>
+          <div class="bench-stat-box">
+            <div class="stat-label">Hallucination Rate</div>
+            <div class="stat-val text-blue" id="benchHallucination">0.0%</div>
+            <div class="stat-sub">Blended Claims Blocked</div>
+          </div>
+          <div class="bench-stat-box">
+            <div class="stat-label">Avg Pipeline Latency</div>
+            <div class="stat-val text-purple" id="benchLatency">3.6 ms</div>
+            <div class="stat-sub">Sub-40ms Production SLA</div>
+          </div>
+          <div class="bench-stat-box">
+            <div class="stat-label">Test Cases Passed</div>
+            <div class="stat-val text-cyan" id="benchPassed">4 / 4</div>
+            <div class="stat-sub">100% Verification Rate</div>
+          </div>
+        </div>
+
+        <div class="benchmark-table-wrapper">
+          <table class="provenance-table">
+            <thead>
+              <tr>
+                <th>Test Case</th>
+                <th>Domain</th>
+                <th>Resolution Verdict</th>
+                <th>Status</th>
+                <th>Latency</th>
+              </tr>
+            </thead>
+            <tbody id="benchmarkTableBody"></tbody>
+          </table>
+        </div>
+
+        <div class="benchmark-actions">
+          <button class="btn-verify" onclick="runLiveBenchmarks()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="5 3 19 12 5 21 5 3"/>
+            </svg>
+            <span>Re-Run Benchmark Suite</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="inspectorModal" style="display: none;">
+    <div class="modal-window">
+      <div class="modal-top">
+        <div class="modal-title-wrap">
+          <div class="modal-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+            </svg>
+          </div>
+          <div>
+            <h3 id="inspectorTitle">Agent State Inspector</h3>
+            <p id="inspectorSub">Internal parameters and verification criteria</p>
+          </div>
+        </div>
+        <button class="modal-close" onclick="closeInspectorModal()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-content" id="inspectorContent"></div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
