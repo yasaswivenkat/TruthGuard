@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 750 780" width="750" height="780">
+  <rect width="750" height="780" rx="10" fill="#0B132B" stroke="#1E293B" stroke-width="1.5"/>
+  <rect x="0" y="0" width="750" height="42" rx="10" fill="#1E293B"/>
+  <text x="24" y="26" font-family="Inter, Arial" font-size="13.5" font-weight="800" fill="#38BDF8">WORKING ARCHITECTURE (SYSTEM FLOW)</text>
+  <rect x="18" y="58" width="714" height="110" rx="8" fill="#1E293B" stroke="#334155" stroke-width="1.5"/>
+  <text x="35" y="100" font-family="Inter, Arial" font-size="11" font-weight="700" fill="#38BDF8">Layer 1: Corpus &amp; Temporal Ingestion</text>
+  <text x="35" y="125" font-family="Calibri, Arial" font-size="9.5" fill="#CBD5E1">Inconsistent Documents + Hybrid Vector DB (Qdrant) + BM25 + Version DAG</text>
+  <rect x="18" y="195" width="714" height="315" rx="8" fill="#1E293B" stroke="#334155" stroke-width="1.5"/>
+  <text x="35" y="235" font-family="Inter, Arial" font-size="11" font-weight="700" fill="#FCD34D">Layer 2: Dialectical Multi-Agent Verification</text>
+  <text x="35" y="260" font-family="Calibri, Arial" font-size="9.5" fill="#CBD5E1">• Retriever Agent: Hybrid passage extraction</text>
+  <text x="35" y="280" font-family="Calibri, Arial" font-size="9.5" fill="#CBD5E1">• Synthesizer Agent: Candidate answer &amp; claim binding</text>
+  <text x="35" y="300" font-family="Calibri, Arial" font-size="9.5" fill="#F87171">• Critic / Adversary Agent ⚔️: Cross-checks contradictions &amp; staleness</text>
+  <rect x="18" y="530" width="714" height="230" rx="8" fill="#1E293B" stroke="#334155" stroke-width="1.5"/>
+  <text x="35" y="570" font-family="Inter, Arial" font-size="11" font-weight="700" fill="#34D399">Layer 3: Resolution &amp; Provenance Engine</text>
+  <text x="35" y="595" font-family="Calibri, Arial" font-size="9.5" fill="#CBD5E1">• Resolvable Precedence: Enforces canonical amendment with dual provenance</text>
+  <text x="35" y="615" font-family="Calibri, Arial" font-size="9.5" fill="#CBD5E1">• Unresolvable Ambiguity: Surfaces both viewpoints without hallucinating</text>
+</svg>

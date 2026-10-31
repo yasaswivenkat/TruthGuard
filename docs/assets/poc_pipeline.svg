@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 150" width="1000" height="150">
+  <rect width="1000" height="150" rx="10" fill="#FFFFFF" stroke="#00A3E0" stroke-width="1.5"/>
+  <text x="500" y="85" font-family="Inter, Arial" font-size="16" font-weight="800" fill="#002B49" text-anchor="middle">
+    1. Ingestion ➔ 2. Synthesis ➔ 3. Adversary ⚔️ ➔ 4. Resolution ➔ 5. Audited Output
+  </text>
+</svg>
